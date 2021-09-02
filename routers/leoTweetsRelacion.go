@@ -8,14 +8,8 @@ import (
 	"github.com/estefania906/twittor/bd"
 )
 
-/*LeoTweets Leo los tweets*/
-func LeoTweets(w http.ResponseWriter, r *http.Request) {
-
-	ID := r.URL.Query().Get("id")
-	if len(ID) < 1 {
-		http.Error(w, "Debe enviar el parámetro id", http.StatusBadRequest)
-		return
-	}
+/*LeoTweetsSeguidores lee los tweets de todos nuestros seguidores*/
+func LeoTweetsSeguidores(w http.ResponseWriter, r *http.Request) {
 
 	if len(r.URL.Query().Get("pagina")) < 1 {
 		http.Error(w, "Debe enviar el parámetro página", http.StatusBadRequest)
@@ -23,18 +17,17 @@ func LeoTweets(w http.ResponseWriter, r *http.Request) {
 	}
 	pagina, err := strconv.Atoi(r.URL.Query().Get("pagina"))
 	if err != nil {
-		http.Error(w, "Debe enviar el parámetro página con valor mayor a cero", http.StatusBadRequest)
+		http.Error(w, "Debe enviar el parámetro página como entero mayor a 0", http.StatusBadRequest)
 		return
 	}
 
-	pag := int64(pagina)
-	respuesta, correcto := bd.LeoTweets(ID, pag)
+	respuesta, correcto := bd.LeoTweetsSeguidores(IDUsuario, pagina)
 	if correcto == false {
 		http.Error(w, "Error al leer los tweets", http.StatusBadRequest)
 		return
 	}
 
-	w.Header().Set("content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(respuesta)
 }
